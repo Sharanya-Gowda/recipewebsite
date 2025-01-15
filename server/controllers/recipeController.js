@@ -2,6 +2,7 @@ require('../models/database');
 const Category = require('../models/Category');
 const Recipe = require('../models/Recipe');
 
+
 /**
  * GET /
  * Homepage 
@@ -14,12 +15,13 @@ exports.homepage = async(req, res) => {
     const thai = await Recipe.find({ 'category': 'Thai' }).limit(limitNumber);
     const american = await Recipe.find({ 'category': 'American' }).limit(limitNumber);
     const chinese = await Recipe.find({ 'category': 'Chinese' }).limit(limitNumber);
+    const indian = await Recipe.find({ 'category': 'Indian' }).limit(limitNumber);
 
-    const food = { latest, thai, american, chinese };
+    const food = { latest, thai, american, chinese,indian };
 
     res.render('index', { title: 'Cooking Blog - Home', categories, food } );
   } catch (error) {
-    res.satus(500).send({message: error.message || "Error Occured" });
+    res.status(500).send({message: error.message || "Error Occured" });
   }
 }
 
@@ -31,7 +33,7 @@ exports.exploreCategories = async(req, res) => {
   try {
     const limitNumber = 20;
     const categories = await Category.find({}).limit(limitNumber);
-    res.render('categories', { title: 'Cooking Blog - Categories', categories } );
+    res.render('categories', { title: 'Rasoi Ghar - Categories', categories } );
   } catch (error) {
     res.status(500).send({message: error.message || "Error Occured" });
   }
@@ -174,28 +176,56 @@ exports.submitRecipeOnPost = async(req, res) => {
 
 
 
-// Delete Recipe
-// async function deleteRecipe(){
-//   try {
-//     await Recipe.deleteOne({ name: 'New Recipe From Form' });
-//   } catch (error) {
-//     console.log(error);
-//   }
-// }
-// deleteRecipe();
+/**
+ * DELETE /recipe/:id
+ * Delete Recipe
+ */
+exports.deleteRecipe = async (req, res) => {
+  try {
+    const recipeId = req.params.id;
+    
+    // Ensure the recipeId is a valid MongoDB ObjectId
+    if (!mongoose.Types.ObjectId.isValid(recipeId)) {
+      return res.status(400).send({ message: 'Invalid recipe ID' });
+    }
+
+    // Delete the recipe from MongoDB
+    const recipe = await Recipe.findByIdAndDelete(recipeId);
+    
+    // Check if recipe was found and deleted
+    if (recipe) {
+      req.flash('infoSubmit', 'Recipe has been deleted.');
+      res.status(200).send({ message: 'Recipe deleted successfully!' });
+    } else {
+      res.status(404).send({ message: 'Recipe not found!' });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ message: 'Server error', error: error.message });
+  }
+};
 
 
-// Update Recipe
-// async function updateRecipe(){
-//   try {
-//     const res = await Recipe.updateOne({ name: 'New Recipe' }, { name: 'New Recipe Updated' });
-//     res.n; // Number of documents matched
-//     res.nModified; // Number of documents modified
-//   } catch (error) {
-//     console.log(error);
-//   }
-// }
-// updateRecipe();
+
+
+
+exports.updateRecipe = async (req, res) => {
+  try {
+    const recipeId = req.params.id;
+    const updates = req.body; // Update fields from the form
+    const updatedRecipe = await Recipe.findByIdAndUpdate(recipeId, updates, { new: true });
+    if (updatedRecipe) {
+      res.status(200).send({ message: 'Recipe updated successfully', updatedRecipe });
+    } else {
+      res.status(404).send({ message: 'Recipe not found' });
+    }
+  } catch (error) {
+    res.status(500).send({ message: 'Error updating recipe', error });
+  }
+};
+
+
+
 
 
 /**

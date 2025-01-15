@@ -1,7 +1,7 @@
 {
   "name": "cookingblog",
   "version": "1.0.0",
-  "description": "",
+  "description": "Create a .env file to store your MongoDB database credentials",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -12,17 +12,18 @@
   "license": "ISC",
   "dependencies": {
     "connect-flash": "^0.1.1",
-    "cookie-parser": "^1.4.5",
+    "cookie-parser": "^1.4.7",
     "dotenv": "^10.0.0",
-    "ejs": "^3.1.6",
-    "express": "^4.17.1",
+    "ejs": "^3.1.10",
+    "express": "^4.21.2",
     "express-ejs-layouts": "^2.5.1",
-    "express-fileupload": "^1.2.1",
-    "express-session": "^1.17.2",
-    "mongodb": "^4.1.2",
-    "mongoose": "^6.4.6"
+    "express-fileupload": "^1.5.1",
+    "express-session": "^1.18.1",
+    "method-override": "^3.0.0",
+    "mongodb": "^4.17.2",
+    "mongoose": "^6.13.5"
   },
   "devDependencies": {
-    "nodemon": "^2.0.13"
+    "nodemon": "^3.1.9"
   }
 }
